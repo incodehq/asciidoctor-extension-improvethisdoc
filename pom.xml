@@ -7,11 +7,25 @@
     
     <packaging>jar</packaging>
 
-    <name>Incode Asciidoctor Contribute extension</name>
+    <name>Incode Asciidoctor Improve this Doc extension</name>
 	<description>
-		Extension for Asciidoctor that provides a 'contribute' block.
+		Extension for Asciidoctor that provides an 'edit' button
 	</description>
     
+    <url>https://github.com/incodehq/asciidoctor-extension-improvethisdoc</url>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>    
+    <scm>
+        <connection>scm:git:git@github.com:incodehq/asciidoctor-extension-improvethisdoc.git</connection>
+        <developerConnection>scm:git:https://github.com/incodehq/asciidoctor-extension-improvethisdoc.git</developerConnection>
+        <url>git@github.com:incodehq/asciidoctor-extension-improvethisdoc.git</url>
+    </scm>
+
     <developers>
         <developer>
             <id>dhaywood</id>
@@ -36,6 +50,19 @@
                 <configuration>
                         <source>${compileSource}</source>
                         <target>${compileTarget}</target>
+                </configuration>
+            </plugin>
+
+            <!-- http://central.sonatype.org/pages/apache-maven.html -->
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.2</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
                 </configuration>
             </plugin>
         </plugins>
@@ -63,34 +90,74 @@
         </snapshotRepository>
     </distributionManagement>
 
-  <repositories>
-    <repository>
-      <id>central</id>
-      <name>Maven Plugin Repository</name>
-      <url>http://repo1.maven.org/maven2</url>
-      <layout>default</layout>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-    </repository>
-  </repositories>
-  
-  <pluginRepositories>
-    <pluginRepository>
-      <id>central</id>
-      <name>Maven Plugin Repository</name>
-      <url>http://repo1.maven.org/maven2</url>
-      <layout>default</layout>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-    </pluginRepository>
-  </pluginRepositories>
-  
+    <profiles>
+        <!-- http://central.sonatype.org/pages/apache-maven.html -->
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>2.2.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.8</version>
+                        <inherited>true</inherited>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <!-- as per http://stackoverflow.com/a/16743137/56880 -->
+                            <additionalparam>-Xdoclint:none</additionalparam>
+                            <debug>true</debug>
+                            <minmemory>128m</minmemory>
+                            <maxmemory>1024m</maxmemory>
+                            <quiet>true</quiet>
+                            <doctitle>${project.name} ${project.version}</doctitle>
+                            <windowtitle>${project.name} ${project.version}</windowtitle>
+                            <testDoctitle>${project.name} ${project.version} (TEST API)</testDoctitle>
+                            <testWindowtitle>${project.name} ${project.version} (TEST API)</testWindowtitle>
+                            <splitindex>true</splitindex>
+                            <encoding>${project.build.sourceEncoding}</encoding>
+                            <links>
+                                <link>http://docs.oracle.com/javase/7/docs/api/</link>
+                            </links>
+                            <linksource>true</linksource>
+                            <detectOfflineLinks>false</detectOfflineLinks>
+                        </configuration>
+                    </plugin>
+
+                    <!-- http://kohsuke.org/pgp-maven-plugin/secretkey.html instead of maven-gpg-plugin -->
+                    <plugin>
+                        <groupId>org.kohsuke</groupId>
+                        <artifactId>pgp-maven-plugin</artifactId>
+                        <version>1.1</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>    
+    </profiles>
 </project>

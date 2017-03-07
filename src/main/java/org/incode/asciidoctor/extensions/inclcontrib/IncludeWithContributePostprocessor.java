@@ -46,7 +46,7 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
         final String organisation = readAttribute(document, "improvethisdoc.organisation", matcher.group(1));
         final String repo = readAttribute(document, "improvethisdoc.repo", matcher.group(2));
         final String branch = readAttribute(document, "improvethisdoc.branch", "master");
-
+        final String label = readAttribute(document, "improvethisdoc.label", "Improve this doc");
 
 
         if(document.basebackend("html")) {
@@ -55,7 +55,7 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
             Element docContentDiv = doc.select("div#doc-content").first();
             String mainUrl = urlFor(organisation, repo, branch, path, file);
 
-            docContentDiv.prepend(buildHtml(mainUrl, ""));
+            docContentDiv.prepend(buildHtml(mainUrl, "", label));
 
             Elements divElements = doc.select("div.sect1");
             for (Element divElement : divElements) {
@@ -73,7 +73,7 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
                     }
 
                     String url = urlFor(organisation, repo, branch, path, id + ".adoc");
-                    h2Element.after(buildHtml(url, "margin-top: -55px;"));
+                    h2Element.after(buildHtml(url, "margin-top: -55px;", label));
                 }
             }
 
@@ -91,15 +91,14 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
         return rootDir;
     }
 
-    private String buildHtml(String url, final String extraStyle) {
+    private String buildHtml(String url, final String extraStyle, final String label) {
         return "<button " +
                     "type=\"button\" " +
                     "class=\"button secondary\" " +
                     "onclick=\"window.location.href=&quot;" + url + "&quot;\"" +
                     "style=\"float: right; font-size: small; padding: 6px; " + extraStyle + " \"" +
                 ">" +
-                    "<i class=\"fa fa-pencil-square-o\"></i>&nbsp;Edit" +
-                "</button>";
+                    "<i class=\"fa fa-pencil-square-o\"></i>&nbsp;" + label + "</button>";
     }
 
     private String urlFor(

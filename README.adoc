@@ -101,6 +101,7 @@ Then, if required specify the following `<attributes>` (for the `asciidoctor-mav
     <improvethisdoc.organisation>apache</improvethisdoc.organisation>
     <improvethisdoc.repo>isis</improvethisdoc.repo>
     <improvethisdoc.branch>master</improvethisdoc.branch>
+    <improvethisdoc.label>Edit</improvethisdoc.label>
 </attributes>
 ----
 
@@ -115,7 +116,7 @@ where:
 * the "rootDir" (which can be optionally be blank) specifies any parent directories of the maven module containing the docs being processed
 * the "organisation" and "repo" are guessed from the docfile path, but can be overridden if the repo has been cloned to some other directory structure
 * the "branch" specifies which branch should be edited in github
-
+* the "label" specifies the text to appear on the button
 
 
 == Release to Maven Central
