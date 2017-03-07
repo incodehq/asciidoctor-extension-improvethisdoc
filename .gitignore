@@ -1,0 +1,9 @@
+*.versionsBackup
+*.iml
+.gradle
+.settings
+/bin/
+.classpath
+.project
+/build/
+/target/
