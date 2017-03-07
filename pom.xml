@@ -3,7 +3,7 @@
 
     <groupId>org.incode.asciidoctor.improvethisdoc</groupId>
     <artifactId>incode-asciidoctor-extension-improvethisdoc</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     
     <packaging>jar</packaging>
 
