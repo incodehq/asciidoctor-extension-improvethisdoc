@@ -1,8 +1,11 @@
 package org.incode.asciidoctor.extensions.inclcontrib;
 
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.beust.jcommander.internal.Lists;
 
 import org.asciidoctor.ast.Document;
 import org.asciidoctor.extension.Postprocessor;
@@ -21,13 +24,6 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
     public String process(Document document, String output) {
 
 
-        //            List<Section> sections = Lists.newArrayList(
-        //                    Section.of("h2", "div.sect2"),
-        //                    Section.of("h3", "div.sect3"),
-        //                    Section.of("h4", "div.sect4"),
-        //                    Section.of("h5", "div.sect5"));
-        //
-        //            process(doc, parsed, divElement, sections);
 
 
 
@@ -57,7 +53,14 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
 
             docContentDiv.prepend(buildHtml(mainUrl, "", parsed));
 
-            handle1(parsed, doc, Section.of("div.sect1", "h2"));
+            //            List<Section> sections = Lists.newArrayList(
+            //                    Section.of("h2", "div.sect2"),
+            //                    Section.of("h3", "div.sect3"),
+            //                    Section.of("h4", "div.sect4"),
+            //                    Section.of("h5", "div.sect5"));
+
+            Section sect = Section.of("div.sect1", "h2");
+            handle1(parsed, doc, Lists.newArrayList(sect));
 
             output = doc.html();
         }
@@ -67,8 +70,12 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
     private void handle1(
             final Parsed parsed,
             final org.jsoup.nodes.Document doc,
-            final Section section) {
+            final List<Section> sections) {
 
+        if(sections.isEmpty()) {
+            return;
+        }
+        final Section section = sections.remove(0);
         final String sectionQuery = section.sect;
         final String headingTag = section.tag;
 
@@ -91,14 +98,20 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
                 headingElement.after(buildHtml(url, "margin-top: -55px;", parsed));
             }
 
-            handle2(parsed, sectionElement, Section.of("div.sect2", "h3"));
+            Section sect = Section.of("div.sect2", "h3");
+            handle2(parsed, sectionElement, Lists.newArrayList(sect));
         }
     }
 
     private void handle2(
             final Parsed parsed,
             final Element parentElement,
-            final Section section) {
+            final List<Section> sections) {
+
+        if(sections.isEmpty()) {
+            return;
+        }
+        final Section section = sections.remove(0);
 
         final String sectionQuery = section.sect;
         final String headingTag = section.tag;
@@ -122,14 +135,20 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
                 headingElement.after(buildHtml(url, "margin-top: -55px;", parsed));
             }
 
-            handle3(parsed, sectionElement, Section.of("div.sect3", "h4"));
+            Section sect = Section.of("div.sect3", "h4");
+            handle3(parsed, sectionElement, Lists.newArrayList(sect));
         }
     }
 
     private void handle3(
             final Parsed parsed,
             final Element parentElement,
-            final Section section) {
+            final List<Section> sections) {
+
+        if(sections.isEmpty()) {
+            return;
+        }
+        final Section section = sections.remove(0);
 
         final String sectionQuery = section.sect;
         final String headingTag = section.tag;
@@ -153,14 +172,20 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
                 headingElement.after(buildHtml(url, "margin-top: -55px;", parsed));
             }
 
-            handle4(parsed, sectionElement, Section.of("div.sect4", "h5"));
+            Section sect = Section.of("div.sect4", "h5");
+            handle4(parsed, sectionElement, Lists.newArrayList(sect));
         }
     }
 
     private void handle4(
             final Parsed parsed,
             final Element parentEl,
-            final Section section) {
+            final List<Section> sections) {
+
+        if(sections.isEmpty()) {
+            return;
+        }
+        final Section section = sections.remove(0);
 
         final String sectionQuery = section.sect;
         final String headingTag = section.tag;
