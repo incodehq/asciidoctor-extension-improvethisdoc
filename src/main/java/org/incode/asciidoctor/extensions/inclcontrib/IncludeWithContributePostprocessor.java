@@ -57,9 +57,7 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
 
             docContentDiv.prepend(buildHtml(mainUrl, "", parsed));
 
-            String sectionQuery = "div.sect1";
-            String headingTag = "h2";
-            handle1(parsed, doc, sectionQuery, headingTag);
+            handle1(parsed, doc, Section.of("div.sect1", "h2"));
 
             output = doc.html();
         }
@@ -69,8 +67,10 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
     private void handle1(
             final Parsed parsed,
             final org.jsoup.nodes.Document doc,
-            final String sectionQuery,
-            final String headingTag) {
+            final Section section) {
+
+        final String sectionQuery = section.getSect();
+        final String headingTag = section.getTag();
 
         Elements sectionElements = doc.select(sectionQuery);
         for (Element sectionElement : sectionElements) {
@@ -91,15 +91,17 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
                 headingElement.after(buildHtml(url, "margin-top: -55px;", parsed));
             }
 
-            handle2(parsed, sectionElement, "div.sect2", "h3");
+            handle2(parsed, sectionElement, Section.of("div.sect2", "h3"));
         }
     }
 
     private void handle2(
             final Parsed parsed,
             final Element parentElement,
-            final String sectionQuery,
-            final String headingTag) {
+            final Section section) {
+
+        final String sectionQuery = section.getSect();
+        final String headingTag = section.getTag();
 
         Elements sectionElements = parentElement.select(sectionQuery);
         for (Element sectionElement : sectionElements) {
@@ -120,15 +122,17 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
                 headingElement.after(buildHtml(url, "margin-top: -55px;", parsed));
             }
 
-            handle3(parsed, sectionElement, "div.sect3", "h4");
+            handle3(parsed, sectionElement, Section.of("div.sect3", "h4"));
         }
     }
 
     private void handle3(
             final Parsed parsed,
             final Element parentElement,
-            final String sectionQuery,
-            final String headingTag) {
+            final Section section) {
+
+        final String sectionQuery = section.getSect();
+        final String headingTag = section.getTag();
 
         Elements sectionElements = parentElement.select(sectionQuery);
         for (Element sectionElement : sectionElements) {
@@ -149,15 +153,17 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
                 headingElement.after(buildHtml(url, "margin-top: -55px;", parsed));
             }
 
-            handle4(parsed, sectionElement, "div.sect4", "h5");
+            handle4(parsed, sectionElement, Section.of("div.sect4", "h5"));
         }
     }
 
     private void handle4(
             final Parsed parsed,
             final Element parentEl,
-            final String sectionQuery,
-            final String headingTag) {
+            final Section section) {
+
+        final String sectionQuery = section.getSect();
+        final String headingTag = section.getTag();
 
         Elements sectElements = parentEl.select(sectionQuery);
         for (Element sectEl : sectElements) {
