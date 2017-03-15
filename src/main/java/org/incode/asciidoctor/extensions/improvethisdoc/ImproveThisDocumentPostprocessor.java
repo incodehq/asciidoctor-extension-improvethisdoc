@@ -1,4 +1,4 @@
-package org.incode.asciidoctor.extensions.inclcontrib;
+package org.incode.asciidoctor.extensions.improvethisdoc;
 
 import java.util.List;
 import java.util.Map;
@@ -13,9 +13,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class IncludeWithContributePostprocessor extends Postprocessor {
+public class ImproveThisDocumentPostprocessor extends Postprocessor {
 
-    public IncludeWithContributePostprocessor(Map<String, Object> config) {
+    public ImproveThisDocumentPostprocessor(Map<String, Object> config) {
         super(config);
     }
 
