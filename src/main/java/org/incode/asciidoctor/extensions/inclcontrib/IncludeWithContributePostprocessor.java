@@ -74,6 +74,7 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
             return;
         }
         final Section section = sections.remove(0);
+        String parentId = section.id;
 
         final String sectionQuery = section.sect;
         final String headingTag = section.tag;
@@ -82,14 +83,16 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
         for (Element sectionElement : sectionElements) {
 
             Elements headingElements = sectionElement.select(headingTag);
-            for (Element headingElement : headingElements) {
 
-                final String id = headingElement.id();
+            String id = null;
+            for (Element headingElement : headingElements) {
+                // there should only be one of these, actually, so we just need to grab the id of that heading
+                id = headingElement.id();
                 if(id == null || id.trim().isEmpty()) {
                     continue;
                 }
 
-                if(id.startsWith("__")) {
+                if(!id.startsWith("_" + parentId)) {
                     continue;
                 }
 
@@ -97,8 +100,21 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
                 headingElement.after(buildHtml(url, "margin-top: -55px;", parsed));
             }
 
-            handle(parsed, sectionElement, Lists.newArrayList(sections));
+            // push the id for next section
+            if(!sections.isEmpty()) {
+                sections.get(0).id = id;
+            }
+
+            handle(parsed, sectionElement, deepCopy(sections));
         }
+    }
+
+    private static List<Section> deepCopy(final List<Section> sections) {
+        List<Section> list = Lists.newArrayList();
+        for (Section section : sections) {
+            list.add(Section.of(section.sect, section.tag));
+        }
+        return list;
     }
 
     static class Section {
@@ -113,6 +129,8 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
             this.sect = sect;
             this.tag = tag;
         }
+
+        private String id;
 
         @Override
         public String toString() {
