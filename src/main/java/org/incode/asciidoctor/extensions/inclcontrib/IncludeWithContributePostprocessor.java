@@ -57,52 +57,15 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
                     Section.of("div.sect5", "h6")
             );
 
-            handle1(parsed, doc, sections);
+            handle(parsed, doc, sections);
 
             output = doc.html();
         }
         return output;
     }
 
-    private void handle1(
-            final Parsed parsed,
-            final org.jsoup.nodes.Document doc,
-            final List<Section> sections
-    ) {
 
-        if(sections.isEmpty()) {
-            return;
-        }
-        final Section section = sections.remove(0);
-
-        final String sectionQuery = section.sect;
-        final String headingTag = section.tag;
-
-        Elements sectionElements = doc.select(sectionQuery);
-        for (Element sectionElement : sectionElements) {
-
-
-            Elements headingElements = sectionElement.select(headingTag);
-            for (Element headingElement : headingElements) {
-
-                final String id = headingElement.id();
-                if(id == null || id.trim().isEmpty()) {
-                    continue;
-                }
-
-                if(id.startsWith("__")) {
-                    continue;
-                }
-
-                String url = urlFor(parsed, id + ".adoc");
-                headingElement.after(buildHtml(url, "margin-top: -55px;", parsed));
-            }
-
-            handle2(parsed, sectionElement, Lists.newArrayList(sections));
-        }
-    }
-
-    private void handle2(
+    private void handle(
             final Parsed parsed,
             final Element parentElement,
             final List<Section> sections) {
@@ -134,80 +97,9 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
                 headingElement.after(buildHtml(url, "margin-top: -55px;", parsed));
             }
 
-            handle3(parsed, sectionElement, Lists.newArrayList(sections));
+            handle(parsed, sectionElement, Lists.newArrayList(sections));
         }
     }
-
-    private void handle3(
-            final Parsed parsed,
-            final Element parentElement,
-            final List<Section> sections) {
-
-        if(sections.isEmpty()) {
-            return;
-        }
-        final Section section = sections.remove(0);
-
-        final String sectionQuery = section.sect;
-        final String headingTag = section.tag;
-
-        Elements sectionElements = parentElement.select(sectionQuery);
-        for (Element sectionElement : sectionElements) {
-
-            Elements headingElements = sectionElement.select(headingTag);
-            for (Element headingElement : headingElements) {
-
-                final String id = headingElement.id();
-                if(id == null || id.trim().isEmpty()) {
-                    continue;
-                }
-
-                if(id.startsWith("__")) {
-                    continue;
-                }
-
-                String url = urlFor(parsed, id + ".adoc");
-                headingElement.after(buildHtml(url, "margin-top: -55px;", parsed));
-            }
-
-            handle4(parsed, sectionElement, Lists.newArrayList(sections));
-        }
-    }
-
-    private void handle4(
-            final Parsed parsed,
-            final Element parentEl,
-            final List<Section> sections) {
-
-        if(sections.isEmpty()) {
-            return;
-        }
-        final Section section = sections.remove(0);
-
-        final String sectionQuery = section.sect;
-        final String headingTag = section.tag;
-
-        Elements sectElements = parentEl.select(sectionQuery);
-        for (Element sectEl : sectElements) {
-
-            Elements headingElements = sectEl.select(headingTag);
-            for (Element headingEl : headingElements) {
-
-                final String id = headingEl.id();
-                if(id == null || id.trim().isEmpty()) {
-                    continue;
-                }
-
-                if(id.startsWith("__")) {
-                    continue;
-                }
-
-                String url = urlFor(parsed, id + ".adoc");
-                headingEl.after(buildHtml(url, "margin-top: -55px;", parsed));
-            }
-        }
-    }
-
 
     static class Section {
 
