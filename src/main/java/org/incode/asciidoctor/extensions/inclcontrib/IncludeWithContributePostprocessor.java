@@ -57,6 +57,10 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
                     Section.of("div.sect5", "h6")
             );
 
+            // editable sections will need to have an id starting with this.
+            final String fileNoSuffix = parsed.file.substring(0, parsed.file.lastIndexOf("."));
+            sections.get(0).id = "_" + fileNoSuffix;
+
             handle(parsed, doc, sections);
 
             output = doc.html();
@@ -76,6 +80,13 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
         final Section section = sections.remove(0);
         String parentId = section.id;
 
+        for (int i = 0; i < 10 - sections.size(); i++) {
+            System.out.print(" ");
+        }
+
+        System.out.print("parentId: " + parentId);
+        System.out.print(" vs ");
+
         final String sectionQuery = section.sect;
         final String headingTag = section.tag;
 
@@ -84,35 +95,37 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
 
             Elements headingElements = sectionElement.select(headingTag);
 
-            String id = null;
             for (Element headingElement : headingElements) {
-                // there should only be one of these, actually, so we just need to grab the id of that heading
-                id = headingElement.id();
+                String id = headingElement.id();
                 if(id == null || id.trim().isEmpty()) {
                     continue;
                 }
 
-                if(!id.startsWith("_" + parentId)) {
-                    continue;
+                System.out.println("     id: " + id);
+
+                if (id.startsWith(parentId)) {
+
+                    String url = urlFor(parsed, id + ".adoc");
+                    headingElement.after(buildHtml(url, "margin-top: -55px;", parsed));
+
+                    // push the id for next section
+                    if(!sections.isEmpty()) {
+                        sections.get(0).id = id;
+                    }
+
+                    handle(parsed, sectionElement, deepCopy(sections));
                 }
-
-                String url = urlFor(parsed, id + ".adoc");
-                headingElement.after(buildHtml(url, "margin-top: -55px;", parsed));
             }
 
-            // push the id for next section
-            if(!sections.isEmpty()) {
-                sections.get(0).id = id;
-            }
-
-            handle(parsed, sectionElement, deepCopy(sections));
         }
     }
 
     private static List<Section> deepCopy(final List<Section> sections) {
         List<Section> list = Lists.newArrayList();
         for (Section section : sections) {
-            list.add(Section.of(section.sect, section.tag));
+            Section copy = Section.of(section.sect, section.tag);
+            copy.id = section.id;
+            list.add(copy);
         }
         return list;
     }
