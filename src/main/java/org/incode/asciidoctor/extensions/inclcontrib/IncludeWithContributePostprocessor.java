@@ -57,7 +57,7 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
                     Section.of("div.sect5", "h6")
             );
 
-            handle1(parsed, doc, Lists.newArrayList(Section.of("div.sect1", "h2")), sections);
+            handle1(parsed, doc, sections);
 
             output = doc.html();
         }
@@ -67,15 +67,13 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
     private void handle1(
             final Parsed parsed,
             final org.jsoup.nodes.Document doc,
-            final List<Section> sections,
-            final List<Section> sections2
-            ) {
+            final List<Section> sections
+    ) {
 
-        if(sections2.isEmpty()) {
+        if(sections.isEmpty()) {
             return;
         }
-        final Section section2 = sections2.remove(0);
-        final Section section = section2;
+        final Section section = sections.remove(0);
 
         final String sectionQuery = section.sect;
         final String headingTag = section.tag;
@@ -100,22 +98,19 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
                 headingElement.after(buildHtml(url, "margin-top: -55px;", parsed));
             }
 
-            Section sect = Section.of("div.sect2", "h3");
-            handle2(parsed, sectionElement, Lists.newArrayList(sect), Lists.<Section>newArrayList(sections2));
+            handle2(parsed, sectionElement, Lists.newArrayList(sections));
         }
     }
 
     private void handle2(
             final Parsed parsed,
             final Element parentElement,
-            final List<Section> sections,
-            final List<Section> sections2) {
+            final List<Section> sections) {
 
-        if(sections2.isEmpty()) {
+        if(sections.isEmpty()) {
             return;
         }
-        final Section section2 = sections2.remove(0);
-        final Section section = section2;
+        final Section section = sections.remove(0);
 
         final String sectionQuery = section.sect;
         final String headingTag = section.tag;
@@ -139,22 +134,19 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
                 headingElement.after(buildHtml(url, "margin-top: -55px;", parsed));
             }
 
-            Section sect = Section.of("div.sect3", "h4");
-            handle3(parsed, sectionElement, Lists.newArrayList(sect), Lists.<Section>newArrayList(sections2));
+            handle3(parsed, sectionElement, Lists.newArrayList(sections));
         }
     }
 
     private void handle3(
             final Parsed parsed,
             final Element parentElement,
-            final List<Section> sections,
-            final List<Section> sections2) {
+            final List<Section> sections) {
 
-        if(sections2.isEmpty()) {
+        if(sections.isEmpty()) {
             return;
         }
-        final Section section2 = sections2.remove(0);
-        final Section section = section2;
+        final Section section = sections.remove(0);
 
         final String sectionQuery = section.sect;
         final String headingTag = section.tag;
@@ -178,22 +170,19 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
                 headingElement.after(buildHtml(url, "margin-top: -55px;", parsed));
             }
 
-            Section sect = Section.of("div.sect4", "h5");
-            handle4(parsed, sectionElement, Lists.newArrayList(sect), Lists.<Section>newArrayList(sections2));
+            handle4(parsed, sectionElement, Lists.newArrayList(sections));
         }
     }
 
     private void handle4(
             final Parsed parsed,
             final Element parentEl,
-            final List<Section> sections,
-            final List<Section> sections2) {
+            final List<Section> sections) {
 
-        if(sections2.isEmpty()) {
+        if(sections.isEmpty()) {
             return;
         }
-        final Section section2 = sections2.remove(0);
-        final Section section = section2;
+        final Section section = sections.remove(0);
 
         final String sectionQuery = section.sect;
         final String headingTag = section.tag;
