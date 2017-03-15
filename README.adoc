@@ -1,7 +1,6 @@
 = Improve this Doc
 
-
-This extension post-processes HTML documentation, adding an 'Improve this Doc' button.
+This extension post-processes HTML documentation, adding an 'Improve this Doc' button (the actual text is configurable).
 
 It adds the button in two different locations.
 
@@ -9,9 +8,8 @@ It adds the button in two different locations.
 
 * It also adds a button for ``include::``'d child documents.
 
-For this second use case, there is some guess-work involved.
-Because the extension is a post-processor, it does not have any visibility as to when an ``include::`` was actually performed.
-It therefore makes the assumption that any `<h2>` element that has an id of `_xxx-yyy-zzz` (ie, beginning with just single underscore '_' character) corresponds to an included file.
+For this second use case, included sections must have an `id` that follows a specific naming convention.
+(This is required because the extension is implemented as a post-processor, and as such does not have any visibility as to when an ``include::`` was actually performed).
 
 
 == Example
@@ -29,7 +27,7 @@ yada yada yada
 \include::_some-doc-or-other_child-doc[leveloffset+=1]
 ----
 
-and then:
+with the included file as:
 
 ._some-doc-or-other_child-doc.adoc
 [source,adoc]
@@ -39,20 +37,55 @@ and then:
 
 yada yada yada
 
-[[__some-doc-or-other_child-doc_subsection]]
-= Subsection
+\include::_some-doc-or-other_child-doc_grandchild-doc[leveloffset+=1]
+----
 
-yada yada yada
 
-[[__some-doc-or-other_child-doc_other-subsection]]
-= Other Subsection
+For the top-level document, the extension will always add an an 'improve this doc' button.
+
+For the included document, because its `id` in the form `_{parentId}_xxx` (ie an underscore then the id of the parent section), then the extension will add an 'improve this doc' button here also.
+
+This works over multiple levels.
+If the child document in turn includes a grandchild using:
+
+._some-doc-or-other_child-doc.adoc
+[source,adoc]
+----
+...
+\include::_some-doc-or-other_child-doc_grandchild-doc[leveloffset+=1]
+----
+
+and the grandchild is in turn:
+
+._some-doc-or-other_child-doc_grandchild-doc.adoc
+[source,adoc]
+----
+[[_some-doc-or-other_child-doc_grandchild-doc]]
+= Grandchild Doc
 
 yada yada yada
 ----
 
-Here the extension will add an 'improve this doc' button for the parent `some-doc-or-other.adoc`, and it will also add a button for the "Child Doc" heading corresponding to `_some-doc-or-other_child-doc.adoc`.
+then the extension will add a button here also.
 
-However, it won't add a button to the subsections of the child doc because their anchors start with a double underscore.
+To suppress the button, you can either choose some `id` that doesn't follow this convention, or omit the id together.
+For example:
+
+._some-doc-or-other_child-doc.adoc
+[source,adoc]
+----
+...
+== Subsection
+
+yada yada yada
+
+[[__some-doc-or-other_child-doc_other-subsection]]
+== Other Subsection
+
+yada yada yada
+----
+
+Neither subsection will have a button added (which is correct; their text is part of the `_some-doc-or-other_child-doc.adoc` file.
 
 
 == Installation
@@ -84,7 +117,7 @@ In the case of Asciidoctor Maven plugin, it is enough to just add it as a depend
         <dependency>
             <groupId>org.incode.asciidoctor.improvethisdoc</groupId>
             <artifactId>incode-asciidoctor-extension-improvethisdoc</artifactId>
-            <version>0.0.1</version>
+            <version>0.0.2</version>
         </dependency>
     </dependencies>
 </plugin>
@@ -133,8 +166,8 @@ For example:
 
 [source]
 ----
-sh release.sh 0.0.1 \
-              0.0.2-SNAPSHOT \
+sh release.sh 0.0.2 \
+              0.0.3-SNAPSHOT \
               dan@haywood-associates.co.uk \
               "this is not really my passphrase"
 ----
@@ -152,7 +185,7 @@ If the script completes successfully, then push changes:
 
 [source]
 ----
-git push origin master && git push origin 0.0.1
+git push origin master && git push origin 0.0.2
 ----
 
 If the script fails to complete, then identify the cause, perform a `git reset --hard` to start over and fix the issue
