@@ -71,13 +71,11 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
             final List<Section> sections2
             ) {
 
-        if(sections.isEmpty()) {
+        if(sections2.isEmpty()) {
             return;
         }
-        final Section section = sections.remove(0);
         final Section section2 = sections2.remove(0);
-
-        System.out.println("handle1: " + section + " vs " + section2);
+        final Section section = section2;
 
         final String sectionQuery = section.sect;
         final String headingTag = section.tag;
@@ -113,13 +111,11 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
             final List<Section> sections,
             final List<Section> sections2) {
 
-        if(sections.isEmpty()) {
+        if(sections2.isEmpty()) {
             return;
         }
-        final Section section = sections.remove(0);
         final Section section2 = sections2.remove(0);
-
-        System.out.println("handle2: " + section + " vs " + section2);
+        final Section section = section2;
 
         final String sectionQuery = section.sect;
         final String headingTag = section.tag;
@@ -154,13 +150,11 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
             final List<Section> sections,
             final List<Section> sections2) {
 
-        if(sections.isEmpty()) {
+        if(sections2.isEmpty()) {
             return;
         }
-        final Section section = sections.remove(0);
         final Section section2 = sections2.remove(0);
-
-        System.out.println("handle3: " + section + " vs " + section2);
+        final Section section = section2;
 
         final String sectionQuery = section.sect;
         final String headingTag = section.tag;
@@ -195,13 +189,11 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
             final List<Section> sections,
             final List<Section> sections2) {
 
-        if(sections.isEmpty()) {
+        if(sections2.isEmpty()) {
             return;
         }
-        final Section section = sections.remove(0);
         final Section section2 = sections2.remove(0);
-
-        System.out.println("handle4: " + section + " vs " + section2);
+        final Section section = section2;
 
         final String sectionQuery = section.sect;
         final String headingTag = section.tag;
@@ -297,7 +289,7 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
         private String branch;
         private String label;
 
-        public Parsed(
+        Parsed(
                 final Document document,
                 final String docfile,
                 final String rootDir,
