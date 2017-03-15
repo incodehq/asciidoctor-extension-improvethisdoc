@@ -23,10 +23,6 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
     @Override
     public String process(Document document, String output) {
 
-
-
-
-
         final Map<String, Object> attributes = document.getAttributes();
 
         // "docfile" => "C:/APACHE/isis-git-rw/adocs/documentation/src/main/asciidoc/migration-notes.adoc"
@@ -53,14 +49,15 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
 
             docContentDiv.prepend(buildHtml(mainUrl, "", parsed));
 
-            //            List<Section> sections = Lists.newArrayList(
-            //                    Section.of("h2", "div.sect2"),
-            //                    Section.of("h3", "div.sect3"),
-            //                    Section.of("h4", "div.sect4"),
-            //                    Section.of("h5", "div.sect5"));
+            List<Section> sections = Lists.newArrayList(
+                    Section.of("div.sect1", "h2"),
+                    Section.of("div.sect2", "h3"),
+                    Section.of("div.sect3", "h4"),
+                    Section.of("div.sect4", "h5"),
+                    Section.of("div.sect5", "h6")
+            );
 
-            Section sect = Section.of("div.sect1", "h2");
-            handle1(parsed, doc, Lists.newArrayList(sect));
+            handle1(parsed, doc, Lists.newArrayList(Section.of("div.sect1", "h2")), sections);
 
             output = doc.html();
         }
@@ -70,17 +67,24 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
     private void handle1(
             final Parsed parsed,
             final org.jsoup.nodes.Document doc,
-            final List<Section> sections) {
+            final List<Section> sections,
+            final List<Section> sections2
+            ) {
 
         if(sections.isEmpty()) {
             return;
         }
         final Section section = sections.remove(0);
+        final Section section2 = sections2.remove(0);
+
+        System.out.println("handle1: " + section + " vs " + section2);
+
         final String sectionQuery = section.sect;
         final String headingTag = section.tag;
 
         Elements sectionElements = doc.select(sectionQuery);
         for (Element sectionElement : sectionElements) {
+
 
             Elements headingElements = sectionElement.select(headingTag);
             for (Element headingElement : headingElements) {
@@ -99,19 +103,23 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
             }
 
             Section sect = Section.of("div.sect2", "h3");
-            handle2(parsed, sectionElement, Lists.newArrayList(sect));
+            handle2(parsed, sectionElement, Lists.newArrayList(sect), Lists.<Section>newArrayList(sections2));
         }
     }
 
     private void handle2(
             final Parsed parsed,
             final Element parentElement,
-            final List<Section> sections) {
+            final List<Section> sections,
+            final List<Section> sections2) {
 
         if(sections.isEmpty()) {
             return;
         }
         final Section section = sections.remove(0);
+        final Section section2 = sections2.remove(0);
+
+        System.out.println("handle2: " + section + " vs " + section2);
 
         final String sectionQuery = section.sect;
         final String headingTag = section.tag;
@@ -136,19 +144,23 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
             }
 
             Section sect = Section.of("div.sect3", "h4");
-            handle3(parsed, sectionElement, Lists.newArrayList(sect));
+            handle3(parsed, sectionElement, Lists.newArrayList(sect), Lists.<Section>newArrayList(sections2));
         }
     }
 
     private void handle3(
             final Parsed parsed,
             final Element parentElement,
-            final List<Section> sections) {
+            final List<Section> sections,
+            final List<Section> sections2) {
 
         if(sections.isEmpty()) {
             return;
         }
         final Section section = sections.remove(0);
+        final Section section2 = sections2.remove(0);
+
+        System.out.println("handle3: " + section + " vs " + section2);
 
         final String sectionQuery = section.sect;
         final String headingTag = section.tag;
@@ -173,19 +185,23 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
             }
 
             Section sect = Section.of("div.sect4", "h5");
-            handle4(parsed, sectionElement, Lists.newArrayList(sect));
+            handle4(parsed, sectionElement, Lists.newArrayList(sect), Lists.<Section>newArrayList(sections2));
         }
     }
 
     private void handle4(
             final Parsed parsed,
             final Element parentEl,
-            final List<Section> sections) {
+            final List<Section> sections,
+            final List<Section> sections2) {
 
         if(sections.isEmpty()) {
             return;
         }
         final Section section = sections.remove(0);
+        final Section section2 = sections2.remove(0);
+
+        System.out.println("handle4: " + section + " vs " + section2);
 
         final String sectionQuery = section.sect;
         final String headingTag = section.tag;
@@ -223,6 +239,11 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
         Section(final String sect, final String tag) {
             this.sect = sect;
             this.tag = tag;
+        }
+
+        @Override
+        public String toString() {
+            return sect + ":" + tag;
         }
     }
 
