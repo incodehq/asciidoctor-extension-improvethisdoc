@@ -189,23 +189,23 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
 
     static class Section {
 
-        public static Section of(String tag, String sect) {
-            return new Section(tag, sect);
+        public static Section of(String sect, String tag) {
+            return new Section(sect, tag);
         }
         private final String tag;
         private final String sect;
 
-        Section(final String tag, final String sect) {
+        Section(final String sect, final String tag) {
             this.sect = sect;
             this.tag = tag;
         }
 
-        public String getTag() {
-            return tag;
-        }
-
         public String getSect() {
             return sect;
+        }
+
+        public String getTag() {
+            return tag;
         }
 
     }
