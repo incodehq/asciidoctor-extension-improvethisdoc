@@ -23,111 +23,95 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
     @Override
     public String process(Document document, String output) {
 
+        if (!document.basebackend("html")) {
+            return output;
+        }
+
         final Map<String, Object> attributes = document.getAttributes();
 
         // "docfile" => "C:/APACHE/isis-git-rw/adocs/documentation/src/main/asciidoc/migration-notes.adoc"
         final String docfile = (String) attributes.get("docfile");
-        // System.out.println("docfile: " + docfile);
 
         // we use the rootDir and srcDir to help parse the docFile.
         // the defaults correspond to the structure of github.com/apache/isis
-
         final String rootDir = readAttribute(document, "improvethisdoc.rootDir", "/adocs/documentation");
         final String srcDir = readAttribute(document, "improvethisdoc.srcDir", "/src/main/asciidoc");
 
-
-        Parsed parsed = new Parsed(document, docfile, rootDir, srcDir);
+        final Parsed parsed = new Parsed(document, docfile, rootDir, srcDir);
         if (parsed.isDoesNotMatch()) {
             return output;
         }
 
-        if(document.basebackend("html")) {
-            org.jsoup.nodes.Document doc = Jsoup.parse(output, "UTF-8");
+        org.jsoup.nodes.Document doc = Jsoup.parse(output, "UTF-8");
 
-            Element docContentDiv = doc.select("div#doc-content").first();
-            String mainUrl = urlFor(parsed, parsed.getFile());
+        Element docContentDiv = doc.select("div#doc-content").first();
+        String mainUrl = urlFor(parsed, parsed.getFile());
 
-            docContentDiv.prepend(buildHtml(mainUrl, "", parsed));
+        docContentDiv.prepend(buildHtml(mainUrl, "", parsed));
 
-            List<Section> sections = Lists.newArrayList(
-                    Section.of("div.sect1", "h2"),
-                    Section.of("div.sect2", "h3"),
-                    Section.of("div.sect3", "h4"),
-                    Section.of("div.sect4", "h5"),
-                    Section.of("div.sect5", "h6")
-            );
+        List<Section> sections = Lists.newArrayList(
+                Section.of("div.sect1", "h2"),
+                Section.of("div.sect2", "h3"),
+                Section.of("div.sect3", "h4"),
+                Section.of("div.sect4", "h5"),
+                Section.of("div.sect5", "h6"),
+                Section.of("div.sect6", "h7"),
+                Section.of("div.sect7", "h8")
+        );
 
-            // editable sections will need to have an id starting with this.
-            final String fileNoSuffix = parsed.file.substring(0, parsed.file.lastIndexOf("."));
-            sections.get(0).id = "_" + fileNoSuffix;
+        // editable sections will need to have an id starting with this, eg "_rgmvn"
+        final String fileNoSuffix = parsed.file.substring(0, parsed.file.lastIndexOf("."));
+        sections.get(0).id = "_" + fileNoSuffix;
 
-            handle(parsed, doc, sections);
+        handle(doc, parsed, sections);
 
-            output = doc.html();
-        }
-        return output;
+        return doc.html();
     }
 
 
-    private void handle(
-            final Parsed parsed,
+    private static void handle(
             final Element parentElement,
+            final Parsed parsed,
             final List<Section> sections) {
 
         if(sections.isEmpty()) {
             return;
         }
-        final Section section = sections.remove(0);
-        String parentId = section.id;
+        final Section parentSection = sections.remove(0);
 
-        for (int i = 0; i < 10 - sections.size(); i++) {
-            System.out.print(" ");
-        }
-
-        System.out.print("parentId: " + parentId);
-        System.out.print(" vs ");
-
-        final String sectionQuery = section.sect;
-        final String headingTag = section.tag;
-
-        Elements sectionElements = parentElement.select(sectionQuery);
+        Elements sectionElements = parentElement.select(parentSection.sect);
         for (Element sectionElement : sectionElements) {
 
-            Elements headingElements = sectionElement.select(headingTag);
+            Elements headingElements = sectionElement.select(parentSection.tag);
 
             for (Element headingElement : headingElements) {
                 String id = headingElement.id();
-                if(id == null || id.trim().isEmpty()) {
-                    continue;
-                }
 
-                System.out.println("     id: " + id);
-
-                if (id.startsWith(parentId)) {
+                if (isChild(parentSection, id)) {
 
                     String url = urlFor(parsed, id + ".adoc");
                     headingElement.after(buildHtml(url, "margin-top: -55px;", parsed));
 
                     // push the id for next section
-                    if(!sections.isEmpty()) {
+                    if (!sections.isEmpty()) {
                         sections.get(0).id = id;
                     }
 
-                    handle(parsed, sectionElement, deepCopy(sections));
+                    handle(sectionElement, parsed, deepCopy(sections));
                 }
             }
-
         }
     }
 
-    private static List<Section> deepCopy(final List<Section> sections) {
-        List<Section> list = Lists.newArrayList();
-        for (Section section : sections) {
-            Section copy = Section.of(section.sect, section.tag);
-            copy.id = section.id;
-            list.add(copy);
+    private static boolean isChild(final Section parentSection, final String id) {
+        if (id == null) {
+            return false;
         }
-        return list;
+        final String trimmedId = id.trim();
+        if (trimmedId.isEmpty()) {
+            return false;
+        }
+        return trimmedId.startsWith(parentSection.id);
     }
 
     static class Section {
@@ -151,16 +135,26 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
         }
     }
 
-    private String readAttribute(final Document document, final String attri, final String fallback) {
+    private static List<Section> deepCopy(final List<Section> sections) {
+        List<Section> list = Lists.newArrayList();
+        for (Section section : sections) {
+            Section copy = Section.of(section.sect, section.tag);
+            copy.id = section.id;
+            list.add(copy);
+        }
+        return list;
+    }
+
+    private static String readAttribute(final Document document, final String attribute, final String fallback) {
         final Map<String, Object> attributes2 = document.getAttributes();
-        String rootDir = (String) attributes2.get(attri);
+        String rootDir = (String) attributes2.get(attribute);
         if(rootDir == null || rootDir.trim().isEmpty()) {
             rootDir = fallback;
         }
         return rootDir;
     }
 
-    private String buildHtml(String url, final String extraStyle, final Parsed parsed) {
+    private static String buildHtml(String url, final String extraStyle, final Parsed parsed) {
         String label = parsed.getLabel();
 
         return "<button " +
@@ -188,8 +182,7 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
                 + path
                 + file;
 
-// https://github.com/apache/isis/edit/master/adocs/documentation/src/main/asciidoc/migration-notes.adoc
-        //https://github.com/grails/grails-doc/edit/3.2.x/src/en/guide/GORM/quickStartGuide/basicCRUD.adoc
+        // https://github.com/apache/isis/edit/master/adocs/documentation/src/main/asciidoc/migration-notes.adoc
     }
 
     private class Parsed {
