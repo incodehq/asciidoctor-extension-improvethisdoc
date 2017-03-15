@@ -71,7 +71,7 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
                 Elements sect2Elements = sect1Element.select("div.sect2");
                 for (Element sect2Element : sect2Elements) {
 
-                    Elements h3Elements = sect1Element.select("h3");
+                    Elements h3Elements = sect2Element.select("h3");
                     for (Element h3Element : h3Elements) {
 
                         final String id = h3Element.id();
@@ -87,10 +87,10 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
                         h3Element.after(buildHtml(url, "margin-top: -55px;", parsed));
                     }
 
-                    Elements sect3Elements = sect1Element.select("div.sect3");
-                    for (Element sect3Element : sect2Elements) {
+                    Elements sect3Elements = sect2Element.select("div.sect3");
+                    for (Element sect3Element : sect3Elements) {
 
-                        Elements h4Elements = sect1Element.select("h4");
+                        Elements h4Elements = sect3Element.select("h4");
                         for (Element h4Element : h4Elements) {
 
                             final String id = h4Element.id();
@@ -105,6 +105,27 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
                             String url = urlFor(parsed, id + ".adoc");
                             h4Element.after(buildHtml(url, "margin-top: -55px;", parsed));
                         }
+
+                        Elements sect4Elements = sect3Element.select("div.sect4");
+                        for (Element sect4Element : sect4Elements) {
+
+                            Elements h5Elements = sect4Element.select("h5");
+                            for (Element h5Element : h4Elements) {
+
+                                final String id = h5Element.id();
+                                if(id == null || id.trim().isEmpty()) {
+                                    continue;
+                                }
+
+                                if(id.startsWith("__")) {
+                                    continue;
+                                }
+
+                                String url = urlFor(parsed, id + ".adoc");
+                                h5Element.after(buildHtml(url, "margin-top: -55px;", parsed));
+                            }
+                        }
+
                     }
                 }
 
