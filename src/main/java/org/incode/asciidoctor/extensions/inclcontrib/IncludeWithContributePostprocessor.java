@@ -69,8 +69,8 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
             final org.jsoup.nodes.Document doc,
             final Section section) {
 
-        final String sectionQuery = section.getSect();
-        final String headingTag = section.getTag();
+        final String sectionQuery = section.sect;
+        final String headingTag = section.tag;
 
         Elements sectionElements = doc.select(sectionQuery);
         for (Element sectionElement : sectionElements) {
@@ -100,8 +100,8 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
             final Element parentElement,
             final Section section) {
 
-        final String sectionQuery = section.getSect();
-        final String headingTag = section.getTag();
+        final String sectionQuery = section.sect;
+        final String headingTag = section.tag;
 
         Elements sectionElements = parentElement.select(sectionQuery);
         for (Element sectionElement : sectionElements) {
@@ -131,8 +131,8 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
             final Element parentElement,
             final Section section) {
 
-        final String sectionQuery = section.getSect();
-        final String headingTag = section.getTag();
+        final String sectionQuery = section.sect;
+        final String headingTag = section.tag;
 
         Elements sectionElements = parentElement.select(sectionQuery);
         for (Element sectionElement : sectionElements) {
@@ -162,8 +162,8 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
             final Element parentEl,
             final Section section) {
 
-        final String sectionQuery = section.getSect();
-        final String headingTag = section.getTag();
+        final String sectionQuery = section.sect;
+        final String headingTag = section.tag;
 
         Elements sectElements = parentEl.select(sectionQuery);
         for (Element sectEl : sectElements) {
@@ -189,7 +189,7 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
 
     static class Section {
 
-        public static Section of(String sect, String tag) {
+        static Section of(String sect, String tag) {
             return new Section(sect, tag);
         }
         private final String tag;
@@ -199,15 +199,6 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
             this.sect = sect;
             this.tag = tag;
         }
-
-        public String getSect() {
-            return sect;
-        }
-
-        public String getTag() {
-            return tag;
-        }
-
     }
 
     private String readAttribute(final Document document, final String attri, final String fallback) {
@@ -289,30 +280,29 @@ public class IncludeWithContributePostprocessor extends Postprocessor {
             return doesNotMatch;
         }
 
-        public String getFile() {
+        String getFile() {
             return file;
         }
 
-        public String getPath() {
+        String getPath() {
             return path;
         }
 
-        public String getOrganisation() {
+        String getOrganisation() {
             return organisation;
         }
 
-        public String getRepo() {
+        String getRepo() {
             return repo;
         }
 
-        public String getBranch() {
+        String getBranch() {
             return branch;
         }
 
-        public String getLabel() {
+        String getLabel() {
             return label;
         }
-
 
     }
 }
