@@ -12,6 +12,13 @@ For this second use case, included sections must have an `id` that follows a spe
 (This is required because the extension is implemented as a post-processor, and as such does not have any visibility as to when an ``include::`` was actually performed).
 
 
+[TIP]
+====
+For an example of the generated output, see the link:http://isis.apache.org/guides/ugfun.html[Apache Isis documentation].
+====
+
+
+
 == Example
 
 For example, suppose we have:
