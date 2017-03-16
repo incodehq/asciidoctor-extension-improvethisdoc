@@ -36,17 +36,15 @@ with the included file as:
 = Child Doc
 
 yada yada yada
-
-\include::_some-doc-or-other_child-doc_grandchild-doc[leveloffset+=1]
 ----
 
 
 For the top-level document, the extension will always add an an 'improve this doc' button.
 
-For the included document, because its `id` in the form `_{parentId}_xxx` (ie an underscore then the id of the parent section), then the extension will add an 'improve this doc' button here also.
+For the included document, because its `id` starts with `_{parentId}_xxx` (ie an underscore then the id of the parent section), then the extension will add an 'improve this doc' button here also.
 
 This works over multiple levels.
-If the child document in turn includes a grandchild using:
+If the child document in turn includes a grandchild document using:
 
 ._some-doc-or-other_child-doc.adoc
 [source,adoc]
@@ -66,9 +64,10 @@ and the grandchild is in turn:
 yada yada yada
 ----
 
-then the extension will add a button here also.
+then the extension will add a button for the grandchild also.
 
-To suppress the button, you can either choose some `id` that doesn't follow this convention, or omit the id together.
+To suppress the button (that is, for a section that is not in its own document) you can either choose an `id` for the section that doesn't follow this convention, or omit the `id` together.
+
 For example:
 
 ._some-doc-or-other_child-doc.adoc
@@ -85,7 +84,7 @@ yada yada yada
 yada yada yada
 ----
 
-Neither subsection will have a button added (which is correct; their text is part of the `_some-doc-or-other_child-doc.adoc` file.
+Neither of these subsections will have a button added.
 
 
 == Installation
