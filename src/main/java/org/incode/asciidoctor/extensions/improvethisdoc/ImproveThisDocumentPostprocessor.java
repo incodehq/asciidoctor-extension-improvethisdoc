@@ -45,9 +45,10 @@ public class ImproveThisDocumentPostprocessor extends Postprocessor {
         org.jsoup.nodes.Document doc = Jsoup.parse(output, "UTF-8");
 
         Element docContentDiv = doc.select("div#doc-content").first();
-        String mainUrl = urlFor(parsed, parsed.getFile());
+        final String file = parsed.getFile();
+        final String html = buildHtml(parsed, file, "");
 
-        docContentDiv.prepend(buildHtml(mainUrl, "", parsed));
+        docContentDiv.prepend(html);
 
         List<Section> sections = Lists.newArrayList(
                 Section.of("div.sect1", "h2"),
@@ -69,7 +70,7 @@ public class ImproveThisDocumentPostprocessor extends Postprocessor {
     }
 
 
-    private static void handle(
+    private void handle(
             final Element parentElement,
             final Parsed parsed,
             final List<Section> sections) {
@@ -89,8 +90,9 @@ public class ImproveThisDocumentPostprocessor extends Postprocessor {
 
                 if (isChild(parentSection, id)) {
 
-                    String url = urlFor(parsed, id + ".adoc");
-                    headingElement.after(buildHtml(url, "margin-top: -55px;", parsed));
+                    final String file = id + ".adoc";
+                    final String html = buildHtml(parsed, file, "margin-top: -55px;");
+                    headingElement.after(html);
 
                     // push the id for next section
                     if (!sections.isEmpty()) {
@@ -154,45 +156,82 @@ public class ImproveThisDocumentPostprocessor extends Postprocessor {
         return rootDir;
     }
 
-    private static String buildHtml(String url, final String extraStyle, final Parsed parsed) {
-        String label = parsed.getLabel();
+    private String buildHtml(
+            final Parsed parsed,
+            final String file,
+            final String extraStyle) {
 
-        return "<button " +
-                    "type=\"button\" " +
-                    "class=\"button secondary\" " +
-                    "onclick=\"window.location.href=&quot;" + url + "&quot;\"" +
-                    "style=\"float: right; font-size: small; padding: 6px; " + extraStyle + " \"" +
+/*
+http://getbootstrap.com/components/#btn-dropdowns-single
+
+<div class="btn-group">
+    <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Source<span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu">
+    <li><a href="#">Edit</a></li>
+    <li><a href="#">History</a></li>
+    <li><a href="#">Raw</a></li>
+    <li><a href="#">Blame</a></li>
+  </ul>
+</div>
+ */
+
+        return "<div class=\"btn-group\" " + "style=\"float: right; font-size: small; padding: 6px; " + extraStyle + " \"" +
                 ">" +
-                    "<i class=\"fa fa-pencil-square-o\"></i>&nbsp;" + label + "</button>";
+                "<button type=\"button\" class=\"btn btn-xs btn-default dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">"
+                + parsed.getSourceLabel() + "&nbsp;<span class=\"caret\"></span>" +
+                "</button>" +
+                "<ul class=\"dropdown-menu\">" +
+                buildLink(buildUrl(parsed, file, "edit"), "fa-pencil-square-o", parsed.getEditLabel()) +
+                buildLink(buildUrl(parsed, file, "commits"), "fa-clock-o", parsed.getHistoryLabel()) +
+                buildLink(buildUrl(parsed, file, "raw"), "fa-file-text-o", parsed.getRawLabel()) +
+                buildLink(buildUrl(parsed, file, "blame"), "fa-hand-o-right", parsed.getBlameLabel()) +
+                "</ul>" +
+                "</div>";
     }
 
-    private static String urlFor(final Parsed parsed, final String file) {
+    private String buildLink(final String editUrl, final String editIcon, final String editLabel) {
+        return "<li><a href=\"" + editUrl + "\" target=\"_blank\"><i class=\"fa "
+                + editIcon
+                + " fa-fw\" aria-hidden=\"true\"></i>&nbsp; " + editLabel + "</a></li>";
+    }
+
+    private String buildUrl(
+            final Parsed parsed,
+            final String file,
+            final String verb) {
 
         String organisation = parsed.getOrganisation();
         String repo = parsed.getRepo();
         String branch = parsed.getBranch();
         String path = parsed.getPath();
 
+        // eg https://github.com/apache/isis/edit/master/adocs/documentation/src/main/asciidoc/migration-notes.adoc
         return "https://github.com/"
                 + organisation
                 + "/"
                 + repo
-                + "/edit/"
+                + "/"
+                + verb
+                + "/"
                 + branch
                 + path
                 + file;
-
-        // https://github.com/apache/isis/edit/master/adocs/documentation/src/main/asciidoc/migration-notes.adoc
     }
 
     private class Parsed {
-        private boolean doesNotMatch;
+
+        private final boolean doesNotMatch;
         private String file;
         private String path;
         private String organisation;
         private String repo;
         private String branch;
         private String label;
+        private String historyLabel;
+        private String sourceLabel;
+        private String rawLabel;
+        private String blameLabel;
 
         Parsed(
                 final Document document,
@@ -216,7 +255,11 @@ public class ImproveThisDocumentPostprocessor extends Postprocessor {
             this.organisation = readAttribute(document, "improvethisdoc.organisation", matcher.group(1));
             this.repo = readAttribute(document, "improvethisdoc.repo", matcher.group(2));
             this.branch = readAttribute(document, "improvethisdoc.branch", "master");
-            this.label = readAttribute(document, "improvethisdoc.label", "Improve this doc");
+            this.label = readAttribute(document, "improvethisdoc.label", "Edit");
+            this.sourceLabel = readAttribute(document, "improvethisdoc.sourceLabel", "Source");
+            this.historyLabel = readAttribute(document, "improvethisdoc.historyLabel", "History");
+            this.rawLabel = readAttribute(document, "improvethisdoc.rawLabel", "Raw");
+            this.blameLabel = readAttribute(document, "improvethisdoc.blameLabel", "Blame");
         }
 
         boolean isDoesNotMatch() {
@@ -243,8 +286,24 @@ public class ImproveThisDocumentPostprocessor extends Postprocessor {
             return branch;
         }
 
-        String getLabel() {
+        String getEditLabel() {
             return label;
+        }
+
+        public String getSourceLabel() {
+            return sourceLabel;
+        }
+
+        public String getHistoryLabel() {
+            return historyLabel;
+        }
+
+        public String getRawLabel() {
+            return rawLabel;
+        }
+
+        public String getBlameLabel() {
+            return blameLabel;
         }
 
     }
