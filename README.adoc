@@ -47,9 +47,9 @@ yada yada yada
 ----
 
 
-For the top-level document, the extension will always add an an 'improve this doc' button.
+For the top-level document, the extension will always add an an 'edit' button.
 
-For the included document, because its `id` starts with `_{parentId}_xxx` (ie an underscore then the id of the parent section), then the extension will add an 'improve this doc' button here also.
+For the included document, because its `id` starts with `_{parentId}_xxx` (ie an underscore then the id of the parent section), then the extension will add an 'edit' button here also.
 
 This works over multiple levels.
 If the child document in turn includes a grandchild document using:
@@ -164,6 +164,8 @@ where:
 
 == Change Log
 
+* `0.0.4` - minor change in the button html to allow edit directly as well as by invoking the dropdown.
+
 * `0.0.3` - button now shows not only edit but also history, raw and blame.
 
 * `0.0.2` - support for multiple heading levels, and fixed up handling of inline headings not in their own section (by way of naming convention for ``id``s)
@@ -191,8 +193,8 @@ For example:
 
 [source]
 ----
-sh release.sh 0.0.3 \
-              0.0.4-SNAPSHOT \
+sh release.sh 0.0.4 \
+              0.0.5-SNAPSHOT \
               dan@haywood-associates.co.uk \
               "this is not really my passphrase"
 ----
@@ -210,7 +212,7 @@ If the script completes successfully, then push changes:
 
 [source]
 ----
-git push origin master && git push origin 0.0.3
+git push origin master && git push origin 0.0.4
 ----
 
 If the script fails to complete, then identify the cause, perform a `git reset --hard` to start over and fix the issue

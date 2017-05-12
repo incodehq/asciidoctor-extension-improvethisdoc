@@ -165,10 +165,15 @@ public class ImproveThisDocumentPostprocessor extends Postprocessor {
 http://getbootstrap.com/components/#btn-dropdowns-single
 
 <div class="btn-group">
-    <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Source<span class="caret"></span>
+   <button type="button" class="btn btn-xs btn-default" onclick="...">Edit</button>
+   <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <span class="caret"></span>
+      <span class="sr-only">Toggle Dropdown</span>
   </button>
+
+    <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Source<span class="caret"></span>
+
   <ul class="dropdown-menu">
-    <li><a href="#">Edit</a></li>
     <li><a href="#">History</a></li>
     <li><a href="#">Raw</a></li>
     <li><a href="#">Blame</a></li>
@@ -176,17 +181,32 @@ http://getbootstrap.com/components/#btn-dropdowns-single
 </div>
  */
 
+/*
+ -        return "<button " +
+ -                    "type=\"button\" " +
+ -                    "class=\"button secondary\" " +
+ -
+ -                    "style=\"float: right; font-size: small; padding: 6px; " + extraStyle + " \"" +
+                  ">" +
+  "<i class=\"fa fa-pencil-square-o\"></i>&nbsp;" + label + "</button>";
+ */
         return "<div class=\"btn-group\" " + "style=\"float: right; font-size: small; padding: 6px; " + extraStyle + " \"" +
                 ">" +
-                "<button type=\"button\" class=\"btn btn-xs btn-default dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">"
-                + parsed.getSourceLabel() + "&nbsp;<span class=\"caret\"></span>" +
-                "</button>" +
-                "<ul class=\"dropdown-menu\">" +
-                buildLink(buildUrl(parsed, file, "edit"), "fa-pencil-square-o", parsed.getEditLabel()) +
-                buildLink(buildUrl(parsed, file, "commits"), "fa-clock-o", parsed.getHistoryLabel()) +
-                buildLink(buildUrl(parsed, file, "raw"), "fa-file-text-o", parsed.getRawLabel()) +
-                buildLink(buildUrl(parsed, file, "blame"), "fa-hand-o-right", parsed.getBlameLabel()) +
-                "</ul>" +
+                    "<button type=\"button\" " +
+                            "class=\"btn btn-xs btn-default\" " +
+                            "onclick=\"window.location.href=&quot;" + buildUrl(parsed, file, "edit") + "&quot;\" >" +
+                        "<i class=\"fa fa-pencil-square-o\"></i>&nbsp;" + parsed.getEditLabel() +
+                    "</button>" +
+                    "<button type=\"button\" class=\"btn btn-xs btn-default dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">" +
+                        "<span class=\"caret\"></span>" +
+                        "<span class=\"sr-only\">Toggle Dropdown</span>" +
+                    "</button>" +
+                    "<ul class=\"dropdown-menu\">" +
+                        buildLink(buildUrl(parsed, file, "edit"), "fa-pencil-square-o", parsed.getEditLabel()) +
+                        buildLink(buildUrl(parsed, file, "commits"), "fa-clock-o", parsed.getHistoryLabel()) +
+                        buildLink(buildUrl(parsed, file, "raw"), "fa-file-text-o", parsed.getRawLabel()) +
+                        buildLink(buildUrl(parsed, file, "blame"), "fa-hand-o-right", parsed.getBlameLabel()) +
+                    "</ul>" +
                 "</div>";
     }
 
